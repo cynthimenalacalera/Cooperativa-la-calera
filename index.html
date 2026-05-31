@@ -17,7 +17,10 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
 const supabaseUrl = "https://vdabvszahxpjmgxpemgn.supabase.co/rest/v1/"
 const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZkYWJ2c3phaHhwam1neHBlbWduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAyNDQ1NjIsImV4cCI6MjA5NTgyMDU2Mn0.abNVe2zfu5smyxoZ5Abjdoc398lxJJmf1vs-Cu5sFm0"
 
-const supabase = createClient(supabaseUrl, supabaseKey)
+const supabase = createClient(
+  supabaseUrl.trim(),
+  supabaseKey.trim()
+)
 
 window.cargar = async function () {
   const { data, error } = await supabase

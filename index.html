@@ -20,22 +20,15 @@ const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 const supabase = createClient(supabaseUrl, supabaseKey)
 
 window.cargar = async function () {
-  console.log("click OK")
-
   const { data, error } = await supabase
     .from("pacientes")
-    .select("*")
+    .select()
 
   console.log("DATA:", data)
   console.log("ERROR:", error)
 
-  const lista = document.getElementById("lista")
-  lista.innerHTML = ""
-
-  if (error) {
-    alert(error.message)
-    return
-  }
+  alert(JSON.stringify(error || data))
+}
 
   data.forEach(p => {
     const li = document.createElement("li")

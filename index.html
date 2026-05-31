@@ -54,10 +54,24 @@ window.cargar = async function () {
   lista.innerHTML = ""
 
   data.forEach(p => {
-    const li = document.createElement("li")
-    li.textContent = p.nombre
-    lista.appendChild(li)
-  })
+  const li = document.createElement("li")
+
+  li.textContent = p.nombre + " "
+
+  const btn = document.createElement("button")
+  btn.textContent = "Eliminar"
+  btn.onclick = async function () {
+    await supabase
+      .from("pacientes")
+      .delete()
+      .eq("id", p.id)
+
+    cargar()
+  }
+
+  li.appendChild(btn)
+  lista.appendChild(li)
+})
 }
 </script>
 </body>

@@ -1,0 +1,373 @@
+<!DOCTYPE html>  <html lang="es">  
+<head>  
+<meta charset="UTF-8">  
+<meta name="viewport" content="width=device-width, initial-scale=1.0">  
+<title>Ficha Integral de Salud — Cooperativa La Calera</title>  
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Fraunces:wght@700&display=swap" rel="stylesheet">  
+<style>  
+  :root {  
+    --bg: #081c15;  
+    --bg2: #1b4332;  
+    --green1: #2D6A4F;  
+    --green2: #40916C;  
+    --green3: #52B788;  
+    --green4: #74C69D;  
+    --green5: #95D5B2;  
+    --green6: #B7E4C7;  
+    --green7: #D8F3DC;  
+    --text: #e8f5e9;  
+    --muted: #74C69D;  
+    --border: rgba(82,183,136,0.2);  
+    --card: rgba(255,255,255,0.04);  
+    --input-bg: rgba(255,255,255,0.07);  
+    --input-border: rgba(255,255,255,0.15);  
+    --warn: #e9c46a;  
+    --danger: #e74c3c;  
+    --sidebar-w: 210px;  
+  }  
+  * { box-sizing: border-box; margin: 0; padding: 0; }  
+  body {  
+    font-family: 'DM Sans', sans-serif;  
+    background: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 50%, var(--bg) 100%);  
+    color: var(--text);  
+    min-height: 100vh;  
+  }  
+  /* Scrollbar */  
+  ::-webkit-scrollbar { width: 5px; }  
+  ::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }  
+  ::-webkit-scrollbar-thumb { background: var(--green2); border-radius: 10px; }  /* Header */
+#header {
+position: sticky; top: 0; z-index: 100;
+background: rgba(8,28,21,0.85);
+backdrop-filter: blur(12px);
+border-bottom: 1px solid var(--border);
+padding: 13px 20px;
+display: flex; align-items: center; justify-content: space-between;
+}
+#header-left { display: flex; align-items: center; gap: 12px; }
+#toggle-btn {
+background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
+border-radius: 8px; padding: 7px 11px; cursor: pointer;
+color: var(--green5); font-size: 15px;
+}
+#title { font-family: 'Fraunces', serif; font-size: 17px; color: var(--green6); }
+#subtitle { font-size: 11px; color: var(--muted); margin-top: 2px; }
+#save-btn {
+padding: 9px 20px;
+background: rgba(82,183,136,0.15); border: 1px solid var(--green3);
+border-radius: 10px; color: var(--green6);
+font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600;
+cursor: pointer; transition: all 0.3s;
+}
+#save-btn.saved { background: var(--green2); }
+
+/* Layout */
+#app { display: flex; min-height: calc(100vh - 57px); }
+
+/* Sidebar */
+#sidebar {
+width: var(--sidebar-w); flex-shrink: 0;
+background: rgba(0,0,0,0.25);
+border-right: 1px solid rgba(82,183,136,0.15);
+padding: 10px 7px; overflow-y: auto;
+transition: width 0.2s;
+}
+#sidebar.closed { width: 0; padding: 0; overflow: hidden; }
+.nav-btn {
+width: 100%; text-align: left; padding: 8px 11px; margin-bottom: 2px;
+background: transparent; border: 1px solid transparent; border-radius: 8px;
+color: var(--muted); font-family: 'DM Sans', sans-serif; font-size: 12px;
+cursor: pointer; display: flex; align-items: center; justify-content: space-between;
+transition: all 0.15s; white-space: nowrap;
+}
+.nav-btn:hover { background: rgba(82,183,136,0.1); }
+.nav-btn.active {
+background: rgba(82,183,136,0.2); border-color: rgba(82,183,136,0.4);
+color: var(--green6); font-weight: 600;
+}
+.nav-dot { font-size: 11px; font-weight: 700; }
+.nav-dot.ok { color: var(--green3); }
+.nav-dot.pending { color: var(--warn); }
+
+/* Content */
+#content { flex: 1; padding: 22px 26px; overflow-y: auto; }
+#sec-title {
+font-family: 'Fraunces', serif; font-size: 22px; color: var(--green7);
+padding-bottom: 12px; margin-bottom: 18px;
+border-bottom: 1px solid var(--border);
+}
+
+/* Sections */
+.section { display: none; }
+.section.active { display: block; }
+
+/* Grid */
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
+
+/* Section title */
+.st {
+grid-column: span 2; border-left: 3px solid var(--green3);
+padding-left: 12px; margin: 18px 0 8px;
+}
+.st span {
+font-size: 11px; font-weight: 700; color: var(--green6);
+text-transform: uppercase; letter-spacing: 0.1em;
+}
+
+/* Field */
+.field { margin-bottom: 12px; }
+.field.half { grid-column: span 1; }
+.field.full { grid-column: span 2; }
+.field label {
+display: block; font-size: 11px; font-weight: 600; color: var(--green5);
+text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 5px;
+}
+.field input, .field select, .field textarea {
+width: 100%; padding: 8px 12px;
+background: var(--input-bg); border: 1px solid var(--input-border);
+border-radius: 8px; color: var(--text);
+font-family: 'DM Sans', sans-serif; font-size: 14px;
+outline: none; transition: border-color 0.2s;
+}
+.field input:focus, .field select:focus, .field textarea:focus {
+border-color: var(--green3); box-shadow: 0 0 0 2px rgba(82,183,136,0.15);
+}
+.field input::placeholder, .field textarea::placeholder { color: rgba(149,213,178,0.35); }
+.field select { appearance: none; }
+.field select option { background: #1b4332; }
+.field textarea { resize: vertical; }
+.field.checkbox-field { display: flex; align-items: center; gap: 10px; }
+.field.checkbox-field input[type=checkbox] { width: 16px; height: 16px; accent-color: var(--green3); flex-shrink: 0; }
+.field.checkbox-field label { font-size: 13px; color: var(--green7); text-transform: none; letter-spacing: 0; font-weight: 400; margin: 0; }
+
+/* Vacuna row */
+.vac-header, .vac-row {
+grid-column: span 2;
+display: grid; grid-template-columns: 1.2fr 0.8fr 0.8fr 0.8fr;
+gap: 8px; align-items: center;
+}
+.vac-header { padding: 0 14px; margin-bottom: 4px; }
+.vac-header span { font-size: 11px; color: var(--green5); font-weight: 700; text-transform: uppercase; }
+.vac-row { background: var(--card); padding: 9px 14px; border-radius: 8px; margin-bottom: 6px; }
+.vac-row span { font-size: 13px; color: var(--green7); font-weight: 500; }
+.vac-row .vac-dosis { font-size: 11px; color: var(--green5); }
+.vac-row select, .vac-row input[type=date] {
+padding: 6px 8px; background: var(--input-bg);
+border: 1px solid var(--input-border); border-radius: 6px;
+color: var(--text); font-size: 12px; font-family: 'DM Sans', sans-serif;
+outline: none; width: 100%;
+}
+.vac-row select { appearance: none; }
+.vac-row select option { background: #1b4332; }
+
+/* Progress bar */
+#progress-wrap { background: rgba(0,0,0,0.25); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+#progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+#progress-title { font-family: 'Fraunces', serif; font-size: 18px; color: var(--green7); }
+#progress-pct { font-size: 32px; font-weight: 700; color: var(--green3); }
+#progress-track { background: rgba(255,255,255,0.08); border-radius: 99px; height: 10px; }
+#progress-bar { background: linear-gradient(90deg,#40916C,#74C69D); border-radius: 99px; height: 100%; transition: width 0.5s; }
+
+/* Summary grid */
+#summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 20px; }
+.summary-card {
+display: flex; align-items: center; gap: 10px; padding: 11px 14px;
+background: var(--card); border-radius: 10px; cursor: pointer;
+text-align: left; border: 1px solid transparent; transition: background 0.2s;
+font-family: 'DM Sans', sans-serif;
+}
+.summary-card:hover { background: rgba(255,255,255,0.07); }
+.summary-card .sc-icon { font-size: 18px; }
+.summary-card .sc-name { font-size: 13px; color: var(--green7); font-weight: 500; }
+.summary-card .sc-status { font-size: 11px; }
+.summary-card .sc-check { font-weight: 700; }
+
+/* Alerts */
+#alerts-box { background: rgba(0,0,0,0.2); border-radius: 12px; padding: 18px; }
+#alerts-title { font-weight: 700; color: var(--green6); margin-bottom: 12px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; }
+.alert-item { padding: 8px 12px; margin-bottom: 6px; background: rgba(233,196,106,0.1); border: 1px solid rgba(233,196,106,0.3); border-radius: 8px; font-size: 13px; color: var(--warn); }
+
+/* Derivaciones */
+.deriv-card { background: var(--card); border-radius: 12px; padding: 16px; margin-bottom: 12px; border: 1px solid var(--border); }
+.deriv-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.deriv-title { font-size: 13px; font-weight: 700; color: var(--green6); }
+.deriv-del { background: rgba(231,76,60,0.15); border: 1px solid rgba(231,76,60,0.4); border-radius: 6px; color: var(--danger); padding: 4px 10px; cursor: pointer; font-size: 12px; font-family: 'DM Sans', sans-serif; }
+#add-deriv {
+width: 100%; padding: 13px;
+background: rgba(82,183,136,0.08); border: 1px dashed rgba(82,183,136,0.4);
+border-radius: 10px; color: var(--muted);
+font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer;
+}
+
+/* Historial */
+.hist-stat { background: rgba(0,0,0,0.2); border-radius: 10px; padding: 16px; margin-bottom: 20px; }
+.hist-stat .hs-label { font-size: 12px; color: var(--green5); font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
+.hist-stat .hs-num { font-family: 'Fraunces', serif; font-size: 36px; color: var(--green6); font-weight: 700; }
+.hist-item { display: flex; gap: 14px; align-items: flex-start; padding: 12px 14px; margin-bottom: 8px; background: var(--card); border-radius: 10px; border: 1px solid rgba(82,183,136,0.12); }
+.hist-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green3); flex-shrink: 0; margin-top: 5px; }
+.hist-action { font-size: 13px; color: var(--green7); font-weight: 500; }
+.hist-meta { font-size: 11px; color: var(--muted); margin-top: 2px; }
+#hist-empty { text-align: center; padding: 40px; color: var(--green3); font-size: 14px; }
+
+/* Nav footer */
+#nav-footer {
+display: flex; justify-content: space-between; align-items: center;
+margin-top: 30px; padding-top: 16px; border-top: 1px solid rgba(82,183,136,0.15);
+}
+.nav-prev, .nav-next {
+padding: 9px 18px; border-radius: 8px;
+font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer;
+}
+.nav-prev { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); color: var(--green5); }
+.nav-next { background: rgba(82,183,136,0.15); border: 1px solid var(--green3); color: var(--green6); font-weight: 600; }
+.nav-prev:disabled, .nav-next:disabled { opacity: 0.3; cursor: default; }
+#nav-counter { font-size: 12px; color: var(--green3); }
+
+@media (max-width: 600px) {
+.grid { grid-template-columns: 1fr; }
+.field.half { grid-column: span 1; }
+.field.full { grid-column: span 1; }
+.st { grid-column: span 1; }
+.vac-header, .vac-row { grid-template-columns: 1fr 1fr; }
+.vac-row span.vac-dosis { display: none; }
+#summary-grid { grid-template-columns: 1fr; }
+}
+</style>
+
+</head>  
+<body>  <!-- Header -->  <div id="header">  
+  <div id="header-left">  
+    <button id="toggle-btn" onclick="toggleSidebar()">◀️</button>  
+    <div>  
+      <div id="title">🌿 Ficha Integral de Salud — Cooperativa La Calera</div>  
+      <div id="subtitle">Nueva ficha · Completitud: <span id="pct-display">0</span>%</div>  
+    </div>  
+  </div>  
+  <button id="save-btn" onclick="guardarFicha()">💾 Guardar ficha</button>  
+</div>  <div id="app">  
+  <!-- Sidebar -->  
+  <div id="sidebar"></div>    <!-- Content -->    <div id="content">  
+    <div id="sec-title"></div>  
+    <div id="sections-container"></div>  
+    <div id="nav-footer">  
+      <button class="nav-prev" id="btn-prev" onclick="navSec(-1)">← Anterior</button>  
+      <span id="nav-counter">1 / 19</span>  
+      <button class="nav-next" id="btn-next" onclick="navSec(1)">Siguiente →</button>  
+    </div>  
+  </div>  
+</div>  <script>  
+const SECCIONES = [  
+  { id:"datos",          label:"Datos Personales",        icon:"👤" },  
+  { id:"resumen",        label:"Resumen / Pendientes",     icon:"📊" },  
+  { id:"fisica",         label:"Salud Física",             icon:"🫀" },  
+  { id:"cardiovascular", label:"Salud Cardiovascular",     icon:"❤️" },  
+  { id:"respiratoria",   label:"Salud Respiratoria",       icon:"🫁" },  
+  { id:"ocupacional",    label:"Salud Ocupacional",        icon:"🦺" },  
+  { id:"mental",         label:"Salud Mental",             icon:"🧠" },  
+  { id:"sexual",         label:"Salud Sexual / ITS",       icon:"🔴" },  
+  { id:"maternoinfantil",label:"Materno Infantil",         icon:"👶" },  
+  { id:"adultomayor",    label:"Adulto Mayor",             icon:"🧓" },  
+  { id:"discapacidad",   label:"Discapacidad",             icon:"♿" },  
+  { id:"vacunas",        label:"Vacunación",               icon:"💉" },  
+  { id:"nutricion",      label:"Nutrición",                icon:"🥦" },  
+  { id:"sensorial",      label:"Salud Sensorial",          icon:"👁️" },  
+  { id:"bucodental",     label:"Salud Bucodental",         icon:"🦷" },  
+  { id:"dermatologica",  label:"Salud Dermatológica",      icon:"🩺" },  
+  { id:"derivaciones",   label:"Derivaciones",             icon:"📋" },  
+  { id:"seguimiento",    label:"Seguimiento",              icon:"📅" },  
+  { id:"auditoria",      label:"Historial / Auditoría",    icon:"📜" },  
+];  
+  
+let secActiva = 0;  
+let sidebarOpen = true;  
+let historial = [];  
+let derivCount = 0;  
+  
+// ─── Helpers ───────────────────────────────────────────────────────  
+function field(id, label, opts={}) {  
+  const { type="text", placeholder="", options=[], width="full", required=false } = opts;  
+  const col = width==="half"?"half":"full";  
+  if(type==="checkbox") return `  
+    <div class="field checkbox-field ${col}" data-field="${id}">  
+      <input type="checkbox" id="${id}" onchange="updateAll()">  
+      <label for="${id}">${label}</label>  
+    </div>`;  
+  if(type==="select") return `  
+    <div class="field ${col}" data-field="${id}">  
+      <label for="${id}">${label}</label>  
+      <select id="${id}" onchange="updateAll()">  
+        <option value="">Seleccionar…</option>  
+        ${options.map(o=>`<option>${o}</option>`).join("")}  
+      </select>  
+    </div>`;  
+  if(type==="textarea") return `  
+    <div class="field full" data-field="${id}">  
+      <label for="${id}">${label}</label>  
+      <textarea id="${id}" rows="3" placeholder="${placeholder}" oninput="updateAll()"></textarea>  </div>`;
+
+return    <div class="field ${col}" data-field="${id}">   <label for="${id}">${label}</label>   <input type="${type}" id="${id}" placeholder="${placeholder}" oninput="updateAll()">   </div>;
+}
+function st(label) { return <div class="st"><span>${label}</span></div>; }
+function vrow(nombre, dosis, key) { return `
+
+  <div class="vac-row">  
+    <span>${nombre}</span><span class="vac-dosis">${dosis}</span>  
+    <select id="vac_${key}_estado" onchange="updateAll()"><option value="">Estado</option><option>Al día</option><option>Pendiente</option><option>No aplica</option></select>  
+    <input type="date" id="vac_${key}_fecha" oninput="updateAll()">  
+  </div>`; }  // ─── Contenido de secciones ────────────────────────────────────────
+function buildSections() {
+const secDefs = {
+datos: <div class="grid">   ${st("Identificación")}   ${field("nombre","Apellido y Nombre",{placeholder:"García, María"})}   ${field("fechaNac","Fecha de Nacimiento",{type:"date",width:"half"})}   ${field("edad","Edad (años)",{type:"number",width:"half"})}   ${field("dni","DNI",{placeholder:"Sin puntos",width:"half"})}   ${field("sexo","Sexo registral",{type:"select",options:["Femenino","Masculino","Otro"],width:"half"})}   ${field("genero","Identidad de género",{placeholder:"Opcional",width:"half"})}   ${field("nacionalidad","Nacionalidad",{width:"half"})}   ${st("Contacto y Domicilio")}   ${field("direccion","Dirección",{placeholder:"Calle, número, barrio"})}   ${field("telefono","Teléfono principal",{type:"tel",width:"half"})}   ${field("telefono2","Teléfono alternativo",{type:"tel",width:"half"})}   ${field("emergencia","Contacto de emergencia",{placeholder:"Nombre y teléfono"})}   ${st("Vínculo con la Cooperativa")}   ${field("rol","Rol",{type:"select",options:["Trabajador/a (barrendero/a)","Familiar directo","Familiar a cargo"],width:"half"})}   ${field("vinculo","Vínculo con el trabajador",{type:"select",options:["Titular","Cónyuge/pareja","Hijo/a","Padre/Madre","Otro familiar"],width:"half"})}   ${field("fechaIngreso","Fecha de incorporación",{type:"date",width:"half"})}   ${field("obraSocial","Obra social / cobertura",{type:"select",options:["IOMA","PAMI","Sin cobertura","Otra"],width:"half"})}   </div>,
+
+resumen: `  
+  <div id="progress-wrap">  
+    <div id="progress-header">  
+      <div id="progress-title">Completitud de la ficha</div>  
+      <div id="progress-pct">0%</div>  
+    </div>  
+    <div id="progress-track"><div id="progress-bar" style="width:0%"></div></div>  
+  </div>  
+  <div id="summary-grid"></div>  
+  <div id="alerts-box"><div id="alerts-title">⚠️ Alertas críticas</div><div id="alerts-list"></div></div>`,  
+
+fisica: `<div class="grid">  
+  ${st("Signos Vitales y Medidas")}  
+  ${field("peso","Peso (kg)",{type:"number",width:"half"})}  
+  ${field("talla","Talla (cm)",{type:"number",width:"half"})}  
+  ${field("imc","IMC (automático)",{placeholder:"Se calcula automáticamente",width:"half"})}  
+  ${field("ta","Tensión arterial",{placeholder:"120/80 mmHg",width:"half"})}  
+  ${field("fc","Frecuencia cardíaca (lpm)",{type:"number",width:"half"})}  
+  ${field("sato2","Saturación O₂ (%)",{type:"number",width:"half"})}  
+  ${field("temp","Temperatura (°C)",{type:"number",width:"half"})}  
+  ${field("glucemia","Glucemia ayunas (mg/dL)",{type:"number",width:"half"})}  
+  ${field("colesterol","Colesterol total (mg/dL)",{type:"number",width:"half"})}  
+  ${field("trigliceridos","Triglicéridos (mg/dL)",{type:"number",width:"half"})}  
+  ${st("Antecedentes Personales")}  
+  ${field("cronicas","Enfermedades crónicas",{type:"textarea",placeholder:"Diabetes, HTA, hipotiroidismo, asma…"})}  
+  ${field("cirugias","Cirugías previas",{type:"textarea",placeholder:"Tipo y año"})}  
+  ${field("internaciones","Internaciones previas",{type:"textarea",placeholder:"Motivo y año"})}  
+  ${field("alergias","Alergias conocidas",{type:"textarea",placeholder:"Medicamentos, alimentos, materiales…"})}  
+  ${field("medicacion","Medicación habitual",{type:"textarea",placeholder:"Nombre, dosis, frecuencia"})}  
+  ${st("Antecedentes Familiares")}  
+  ${field("antFamiliares","Enfermedades con antecedente familiar",{type:"textarea",placeholder:"Diabetes, HTA, cáncer, cardiopatía, ACV…"})}  
+  ${st("Hábitos")}  
+  ${field("tabaco","Tabaquismo",{type:"select",options:["No fuma","Ex-fumador/a","Fuma actualmente"],width:"half"})}  
+  ${field("cigarrillos","Cigarrillos/día",{placeholder:"Si fuma",width:"half"})}  
+  ${field("alcohol","Alcohol",{type:"select",options:["No consume","Ocasional","Moderado","Frecuente","Problemático"],width:"half"})}  
+  ${field("actFisica","Actividad física",{type:"select",options:["Sedentario/a","Leve","Moderada 3x/sem","Intensa 5+/sem"],width:"half"})}  
+  ${field("sueno","Horas de sueño",{type:"select",options:["Menos de 5h","5-6h","7-8h","Más de 8h"],width:"half"})}  
+  ${field("sustancias","Otras sustancias",{type:"textarea",placeholder:"Especificar si corresponde"})}  
+  ${st("Screening de Cáncer")}  
+  ${field("mamografia","Mamografía (mujeres 40+)",{type:"select",options:["Al día","Pendiente","No aplica"],width:"half"})}  
+  ${field("fechaMamo","Fecha última mamografía",{type:"date",width:"half"})}  
+  ${field("pap","PAP / Colposcopía",{type:"select",options:["Al día","Pendiente","No aplica"],width:"half"})}  
+  ${field("fechaPap","Fecha último PAP",{type:"date",width:"half"})}  
+  ${field("psa","PSA (varones 50+)",{type:"select",options:["Al día","Pendiente","No aplica"],width:"half"})}  
+  ${field("somf","Sangre oculta en MF (50+)",{type:"select",options:["Al día","Pendiente","No aplica"],width:"half"})}  
+</div>`,  
+
+cardiovascular: `<div class="grid">  
+  ${st("Factores de Riesgo")}  
+  ${field("hta","Hipertensión arterial",{type:"select",options:["No","HTA Grado 1","HTA Grado 2","Controlada con medicación"]})}  
+  ${field("diabetes","Diabetes",{type:"select",options:["No","Tipo 1","Tipo 2","Prediabetes"],width:"half"})}  
+  ${field("dislipe
